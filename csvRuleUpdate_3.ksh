@@ -1,13 +1,16 @@
 #!/bin/ksh93
+#####################################################################
+#      Author          : Francisco Hernandez
+#      Company Name    : BCBST
+#      Date written    : 02/11/2020
+#      Description     : Multi-Use tool for any mapping/rule inserts in TDSN
+#                        Creates the "MERGE STATEMENT" command file
+#####################################################################
 
-myPath=/datawhse/work/f16802h/MapRuleUpdate
+myPath=/datawhse/work/${USR}/MapRuleUpdate
 tr , '\n' < colHeaders.txt > colHeaders1.txt
 COLS_TGT_COLS_FILE=${myPath}/colHeaders1.txt
 
-grep UDBUSERID /home/f16802h/app_sec/F16802H.DWH.DB2|sed 's/export UDBUSERID=//' |read UDBUSERID
-grep UDBPASS /home/f16802h/app_sec/F16802H.DWH.DB2|sed 's/export UDBPASS=//' |read UDBPASS
-echo "Connecting to $TDSN_DB Database"
-db2 connect to $TDSN_DB user $UDBUSERID using $UDBPASS
 
   set -eu
   SRC_SCHEMA="$(echo $SRC_TABLE|cut -d'.' -f1)"
@@ -63,19 +66,3 @@ db2 connect to $TDSN_DB user $UDBUSERID using $UDBPASS
      echo ")" >>"$CMD_FILE"
      echo ";" >>"$CMD_FILE"
      echo ">>> Command Generation Complete:"
-     cat "$CMD_FILE"
-   #  rm "${COLS_SRC_COLS_FILE}"
-   #  rm "${COLS_TGT_COLS_FILE}"
-     set +eu
-     echo ">>> Running merge"
-     db2 -txf "$CMD_FILE"
-     EXIT_CODE=$?
-     if [ "$EXIT_CODE" -ne 0 ]; then
-      echo ">>> Merge failed!  Return Code = $EXIT_CODE"
-      echo "Check key Columns in PREP file and drop temp table before restarting"
-    else
-      echo ">>>Merge Succeded."
-      echo "Done."
-    fi
-date
-exit $EXIT_CODE
