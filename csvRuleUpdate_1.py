@@ -1,9 +1,17 @@
 #!/usr/bin/env python3
+#####################################################################
+#      Author          : Francisco Hernandez
+#      Company Name    : BCBST
+#      Date written    : 02/11/2020
+#      Description     : Multi-Use tool for any mapping/rule inserts in TDSN
+#                        Creates the Insert Statements from CSV
+#####################################################################
 import csv
 import string
 import keyWordCheck
 import os
 
+fileName = os.environ['TGT_TABLE']
 
 def insert_fromCSV():
     insertState = "INSERT INTO "
@@ -11,7 +19,7 @@ def insert_fromCSV():
     schemaName = os.environ['SRC_TABLE']
 #    schemaName = input("Enter Schema ")
     a = []
-    newFile =  open('mappingRules.sql', 'w')
+    newFile =  open(f"{fileName}_insert_cmd", 'w')
     colHeader =  open('colHeaders.txt', 'w')
 
     with open('some_1.csv') as colFile:
